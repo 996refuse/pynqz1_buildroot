@@ -1,0 +1,94 @@
+From 657d31051d85b725899fd1243750e8aa5e8da6fb Mon Sep 17 00:00:00 2001
+From: Jiang Yongquan <woxwchc@foxmail.com>
+Date: Tue, 23 Jul 2024 13:03:23 +0800
+Subject: [PATCH] hack pynqz1
+
+---
+ arch/arm/boot/dts/Makefile        |  1 +
+ arch/arm/boot/dts/zynq-pynqz1.dts | 62 +++++++++++++++++++++++++++++++
+ 2 files changed, 63 insertions(+)
+ create mode 100644 arch/arm/boot/dts/zynq-pynqz1.dts
+
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index df6d905eeb87..ae4e1cadcf54 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -1490,6 +1490,7 @@ dtb-$(CONFIG_ARCH_ZYNQ) += \
+ 	zynq-zc770-xm012.dtb \
+ 	zynq-zc770-xm013.dtb \
+ 	zynq-zed.dtb \
++	zynq-pynqz1.dtb \
+ 	zynq-zturn.dtb \
+ 	zynq-zturn-v5.dtb \
+ 	zynq-zybo.dtb \
+diff --git a/arch/arm/boot/dts/zynq-pynqz1.dts b/arch/arm/boot/dts/zynq-pynqz1.dts
+new file mode 100644
+index 000000000000..3a1413640a4d
+--- /dev/null
++++ b/arch/arm/boot/dts/zynq-pynqz1.dts
+@@ -0,0 +1,62 @@
++/dts-v1/;
++#include "zynq-7000.dtsi"
++
++/ {
++	model = "Zynq PYNQ Z1 Development Board";
++	compatible = "digilent,zynq-pynqz1", "xlnx,zynq-7000";
++
++	aliases {
++		ethernet0 = &gem0;
++		serial0 = &uart0;
++		spi0 = &qspi;
++		mmc0 = &sdhci0;
++	};
++
++	memory {
++		device_type = "memory";
++		reg = <0x0 0x20000000>;
++	};
++
++	chosen {
++		bootargs = "";
++		stdout-path = "serial0:115200n8";
++	};
++
++	usb_phy0: phy0 {
++		compatible = "usb-nop-xceiv";
++		#phy-cells = <0>;
++		reset-gpios = <&gpio0 46 1>;
++	};
++};
++
++&clkc {
++	ps-clk-frequency = <50000000>;
++};
++
++&gem0 {
++	status = "okay";
++	enet-reset = <0x04 0x09 0x00>;
++	local-mac-address = [00 0a 35 00 00 00];
++	phy-mode = "rgmii-id";
++	xlnx,ptp-enet-clock = <0x6750918>;
++};
++
++&qspi {
++	status = "okay";
++};
++
++&sdhci0 {
++	status = "okay";
++};
++
++&uart0 {
++	status = "okay";
++	device_type = "serial";
++	port-number = <0x00>;
++};
++
++&usb0 {
++	status = "okay";
++	dr_mode = "host";
++	usb-phy = <&usb_phy0>;
++};
+-- 
+2.25.1
+
